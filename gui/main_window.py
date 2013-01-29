@@ -53,6 +53,7 @@ class MainWindow(QtGui.QMainWindow):
         btn_groups.layout().addWidget(self.start_btn)
 
     def connect_signal(self):
+        #Synchronize between native file_collection and file_collection_model
         self.update_file_collection.connect(self.file_collection_model.update)
 
         #Connect add files signal
