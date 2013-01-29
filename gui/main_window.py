@@ -22,10 +22,10 @@ class MainWindow(QtGui.QMainWindow):
         self.file_collection = FileCollection()
         self.file_collection_model = FileCollectionModel(self.file_collection)
 
-        self.initGUI()
+        self.init_gui()
         self.connect_signal()
 
-    def initGUI(self):
+    def init_gui(self):
         self.resize(800, 600)
         self.setWindowTitle('10bit to 8bit GUI')
 
