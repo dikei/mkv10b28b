@@ -74,4 +74,7 @@ class MainWindow(QtGui.QMainWindow):
         self.file_collection.file_path = new_path
         self.update_file_collection.emit()
 
+    def closeEvent(self, QCloseEvent):
+        self.config.save()
+        super(MainWindow, self).closeEvent(QCloseEvent)
 
