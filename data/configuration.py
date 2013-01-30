@@ -9,9 +9,9 @@ class Configuration(object):
         self.config = {
             'version': '0.1',
             'x264': '/usr/bin/x264',
-            '--preset': 'veryfast',
-            '--tune': 'animation',
-            '--crf': '18',
+            'preset': 'veryfast',
+            'tune': 'animation',
+            'crf': '18',
             'mkvmerge': '/usr/bin/mkvmerge',
         }
 
@@ -24,6 +24,8 @@ class Configuration(object):
         except IOError:
             pass
         except TypeError:
+            pass
+        except ValueError:
             pass
 
 

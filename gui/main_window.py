@@ -8,6 +8,8 @@ from data.file_collection import FileCollection
 from gui.file_collection_model import FileCollectionModel
 
 #noinspection PyOldStyleClasses
+from gui.worker import ConvertWorker, ParserWorker
+
 class MainWindow(QtGui.QMainWindow):
 
     add_files_signal = QtCore.pyqtSignal()
@@ -21,6 +23,9 @@ class MainWindow(QtGui.QMainWindow):
 
         self.file_collection = FileCollection()
         self.file_collection_model = FileCollectionModel(self.file_collection)
+
+        self.parse_worker = ParserWorker(self.file_collection)
+        self.convert_worker = ConvertWorker(self.file_collection, self.config)
 
         self.init_gui()
         self.connect_signal()
@@ -62,19 +67,28 @@ class MainWindow(QtGui.QMainWindow):
         #Connect remove files signal
         self.del_btn.clicked.connect(self.remove_files)
 
+        #Connect start convert signal
+        self.start_btn.clicked.connect(self.start_convert)
+
+        self.parse_worker.update_status.connect(self.statusBar().showMessage)
+        self.parse_worker.all_done.connect(self.setEnabled)
+
     def add_files(self):
         file_paths = QtGui.QFileDialog(self).getOpenFileNames()
-        self.file_collection.file_path.extend(file_paths)
+        self.file_collection.file_paths.extend(file_paths)
         self.update_file_collection.emit()
 
     def remove_files(self):
         select_model = self.list_view.selectionModel()
         del_paths = set(__i.data() for __i in select_model.selectedIndexes())
-        new_path = [path for path in self.file_collection.file_path if path not in del_paths]
-        self.file_collection.file_path = new_path
+        new_path = [path for path in self.file_collection.file_paths if path not in del_paths]
+        self.file_collection.file_paths = new_path
         self.update_file_collection.emit()
+
+    def start_convert(self):
+        self.convert_worker.start()
+        self.parse_worker.start()
 
     def closeEvent(self, QCloseEvent):
         self.config.save()
         super(MainWindow, self).closeEvent(QCloseEvent)
-
