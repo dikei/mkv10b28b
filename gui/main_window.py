@@ -74,7 +74,8 @@ class MainWindow(QtGui.QMainWindow):
         self.parse_worker.all_done.connect(self.setEnabled)
 
     def add_files(self):
-        file_paths = QtGui.QFileDialog(self).getOpenFileNames()
+        file_paths = QtGui.QFileDialog(self).getOpenFileNames(self,
+            "Choose files to convert", ".", "Matroska video (*.mkv)")
         self.file_collection.file_paths.extend(file_paths)
         self.update_file_collection.emit()
 
