@@ -1,0 +1,8 @@
+{
+    "mkvmerge": "/usr/bin/mkvmerge", 
+    "preset": "veryfast", 
+    "version": "0.1", 
+    "crf": "18", 
+    "x264": "/usr/bin/x264", 
+    "tune": "animation"
+}
