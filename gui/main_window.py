@@ -31,7 +31,7 @@ class MainWindow(QtGui.QMainWindow):
 
     def init_gui(self):
         self.resize(800, 600)
-        self.setWindowTitle('10bit to 8bit GUI')
+        self.setWindowTitle('MKV 10bit to 8bit GUI')
 
         self.setCentralWidget(QtGui.QWidget())
 
