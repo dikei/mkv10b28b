@@ -16,6 +16,8 @@ class ConvertWorker(QtCore.QThread):
         self.start_convert.emit()
         self.file_collection.convert(self.config.config)
 
+    def cancel(self):
+        self.file_collection.cancel()
 
 class ParserWorker(QtCore.QThread):
 
@@ -29,6 +31,7 @@ class ParserWorker(QtCore.QThread):
 
     def run(self):
         done = 0
+        self.update_status.emit('Starting..')
         while not self.file_collection.all_done:
             try:
                 output = self.file_collection.output_queue.pop().strip()

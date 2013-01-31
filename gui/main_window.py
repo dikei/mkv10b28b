@@ -56,8 +56,7 @@ class MainWindow(QtGui.QMainWindow):
         self.start_btn = QtGui.QPushButton("Start converting")
         btn_groups.layout().addWidget(self.start_btn)
 
-        self.progress_dialog = QtGui.QProgressDialog("Starting..", "", 0 ,0)
-        self.progress_dialog.setCancelButton(None)
+        self.progress_dialog = QtGui.QProgressDialog("Starting..", "Cancel", 0 ,0)
         self.progress_dialog.setModal(True)
         self.progress_dialog.setWindowTitle("Converting in process..")
 
@@ -79,6 +78,7 @@ class MainWindow(QtGui.QMainWindow):
         self.parse_worker.update_status.connect(self.progress_dialog.setLabelText)
         self.parse_worker.update_progress.connect(self.progress_dialog.setValue)
         self.parse_worker.all_done.connect(self.progress_dialog.hide)
+        self.progress_dialog.canceled.connect(self.convert_worker.cancel)
 
     def add_files(self):
         file_paths = QtGui.QFileDialog(self).getOpenFileNames(self,
