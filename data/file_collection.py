@@ -43,18 +43,31 @@ class FileCollection(object):
             basename = os.path.basename(file_path)
             dirname = os.path.dirname(file_path)
             outfile_path = os.path.join(dirname, '[8bit]' + basename)
+            tmpfile_path = os.path.join(dirname, '[TMP]' + basename)
             try:
                 self.process = Popen(
                     [config['x264'], '--preset', config['preset'], '--tune',
                      config['tune'], '--crf', config['crf'], '--quiet',
-                     file_path, '--output', outfile_path], stdout=PIPE,
+                     file_path, '--output', tmpfile_path], stdout=PIPE,
                     stderr=STDOUT, bufsize=1, close_fds=ON_POSIX,
                     universal_newlines=True)
                 t = Thread(target=enqueue_output, args=(self.process.stdout, self.output_queue))
                 t.daemon = True
                 t.start()
                 self.process.wait()
+                self.process = Popen(
+                    [config['mkvmerge'], tmpfile_path,
+                     '-D', file_path, '-o', outfile_path],
+                    stdout=PIPE, stderr=STDOUT, bufsize=1,
+                    close_fds=ON_POSIX, universal_newlines=True
+                )
+                t = Thread(target=enqueue_output, args=(self.process.stdout, self.output_queue))
+                t.daemon = True
+                t.start()
+                self.process.wait()
             finally:
+                if os.path.exists(tmpfile_path):
+                    os.remove(tmpfile_path)
                 self.file_done += 1
         self.all_done = True
 
