@@ -6,13 +6,18 @@ from subprocess import Popen, PIPE, STDOUT
 from threading import Thread
 import os
 import sys
+import logging
+
+logger = logging.getLogger(__name__)
+ON_POSIX = 'posix' in sys.builtin_module_names
+
 
 def enqueue_output(out, queue):
     for line in iter(out.readline, b''):
+        logger.debug(line)
         queue.append(line)
     out.close()
 
-ON_POSIX = 'posix' in sys.builtin_module_names
 
 class FileCollection(object):
 

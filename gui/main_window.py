@@ -6,10 +6,9 @@ from PyQt4 import QtGui, QtCore
 from data.configuration import Configuration
 from data.file_collection import FileCollection
 from gui.file_collection_model import FileCollectionModel
-
-#noinspection PyOldStyleClasses
 from gui.worker import ConvertWorker, ParserWorker
 
+#noinspection PyOldStyleClasses
 class MainWindow(QtGui.QMainWindow):
 
     add_files_signal = QtCore.pyqtSignal()
@@ -57,6 +56,11 @@ class MainWindow(QtGui.QMainWindow):
         self.start_btn = QtGui.QPushButton("Start converting")
         btn_groups.layout().addWidget(self.start_btn)
 
+        self.progress_dialog = QtGui.QProgressDialog("Starting..", "", 0 ,0)
+        self.progress_dialog.setCancelButton(None)
+        self.progress_dialog.setModal(True)
+        self.progress_dialog.setWindowTitle("Converting in process..")
+
     def connect_signal(self):
         #Synchronize between native file_collection and file_collection_model
         self.update_file_collection.connect(self.file_collection_model.update)
@@ -70,8 +74,11 @@ class MainWindow(QtGui.QMainWindow):
         #Connect start convert signal
         self.start_btn.clicked.connect(self.start_convert)
 
+        self.convert_worker.start_convert.connect(self.progress_dialog.show)
         self.parse_worker.update_status.connect(self.statusBar().showMessage)
-        self.parse_worker.all_done.connect(self.setEnabled)
+        self.parse_worker.update_status.connect(self.progress_dialog.setLabelText)
+        self.parse_worker.update_progress.connect(self.progress_dialog.setValue)
+        self.parse_worker.all_done.connect(self.progress_dialog.hide)
 
     def add_files(self):
         file_paths = QtGui.QFileDialog(self).getOpenFileNames(self,
@@ -87,6 +94,7 @@ class MainWindow(QtGui.QMainWindow):
         self.update_file_collection.emit()
 
     def start_convert(self):
+        self.progress_dialog.setRange(0, len(self.file_collection.file_paths))
         self.convert_worker.start()
         self.parse_worker.start()
 
