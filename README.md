@@ -7,11 +7,14 @@ Requirements:
 * x264 with lavf or ffms support
 * mkvmerge
 * python2
-* pyqt
+* PyQt
 
 ###Usage
 Copy config.json.default to config.json and modify path to mkvmerge and x264
 before running program.
 
     python main.py
+
+###Licence
+This program use GPL license, the same as PyQt
 
